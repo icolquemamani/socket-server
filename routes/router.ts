@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Server from '../class/server';
-import { message } from '../sockets/sockets';
+import { usersConnected } from '../sockets/sockets';
 
 const router = Router();
 
@@ -54,6 +54,36 @@ router.post('/messages/:id', ( req: Request, res: Response ) => {
         id
     })
 
+});
+
+// service for grt users id
+router.get('/users', ( req: Request, res: Response ) => {
+
+    const server = Server.instance;
+
+    server.io.clients( ( err: any, clients: any ) => {
+        console.log(err, clients );
+        if ( err ) {
+            return res.json({
+                ok: false,
+                err,
+            })
+        } else {
+            return res.json({
+                ok: true,
+                clients,
+            })
+        }
+    });
+});
+
+// Get users data
+router.get('/users/detail', ( req: Request, res: Response ) => {
+    
+    return res.json({
+        ok: true,
+        clients: usersConnected.getList()
+    });
 });
 
 export default router;
